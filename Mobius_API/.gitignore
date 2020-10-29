@@ -1,0 +1,8 @@
+# code 
+.vscode
+
+# Project dependencies
+node_modules
+
+# test
+test
