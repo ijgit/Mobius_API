@@ -4,6 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const methodOverride = require('method-override')
+const multer = require('multer');
+const gridfsStorage = require('multer-gridfs-storage');
+
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var modelsRouter = require('./routes/models');
@@ -25,6 +30,34 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/models', modelsRouter);
 
+
+
+const { defaultConfiguration, path } = require('../app');
+
+// Initialize gridfs storage engine 
+const storage = new gridfsStorage({
+  url: defaultConfiguration.mongoURI,
+  file: (req, file) => {
+    return new Promise((resolve, reject)=>{
+      crypto.randomBytes(16, (err, buf)=>{
+        if(err){
+          return reject(err)
+        }
+        const filename = buf.toString('hex') + path.extname(file.originalname)
+        const fileInfo = {
+          filename: filename,
+          bucketName: 'uploads'
+        };
+        resolve(fileInfo)
+      });
+    });
+  }
+});
+
+const upload = multer({storage})
+
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -41,4 +74,14 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
 module.exports = app;
+
+
+// server "localhost:3000"
+
+port = 3000
+app.listen(port, () =>{
+  console.log('localhost:', port)
+  console.log('app listening on port ', port)
+})
