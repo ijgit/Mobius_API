@@ -1,12 +1,15 @@
 var express = require('express');
+
 const multer = require('multer');
 var gridfs = require('gridfs-stream');
 var fs = require("fs");
 var assert = require('assert');
+const mongodb = require("mongodb");
+const MongoClient = require("mongodb").MongoClient;
+const { Readable } = require("stream");
+
 
 var router = express.Router();
-// const { Readable } = require('stream');
-
 /* GET  listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -33,6 +36,16 @@ router.post('/', function(req, res, next){
   console.log(req.body.ae)
 
   res.send('post request')
+});
+
+
+router.post('/upload', (req, res, next)=>{
+  let cnt = req.body.cnt;
+  let ae = req.body.ae;
+
+  console.log(cnt);
+  console.log(ae);
+
 });
 
 router.delete('/', function(req, res, next){

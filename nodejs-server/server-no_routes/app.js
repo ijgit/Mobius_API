@@ -27,8 +27,11 @@ const { Readable } = require("stream");
   Create Express server && Express Router configuration.
 */
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 app.use("/models", router);
+
+// app.use(multer().array()) -> unexpected error
+
 /*
   Connect Mongo Driver to MongoDB.
 */
