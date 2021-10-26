@@ -10,6 +10,8 @@ const { Readable } = require("stream");
 
 
 var router = express.Router();
+
+
 /* GET  listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -40,6 +42,7 @@ router.post('/', function(req, res, next){
 
 
 router.post('/upload', (req, res, next)=>{
+  console.log(req.body)
   let cnt = req.body.cnt;
   let ae = req.body.ae;
 

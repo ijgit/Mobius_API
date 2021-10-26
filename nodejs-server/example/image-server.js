@@ -129,6 +129,9 @@ router.get('/:cnt', (req, res) => {
   POST /images
 */
 router.post('/', (req, res) => {
+  console.log(req.body)
+
+
   const storage = multer.memoryStorage()
   const upload = multer({ storage: storage});//, limits: { fields: 2, files: 1, parts: 3 }
   upload.single('image')(req, res, (err) => {

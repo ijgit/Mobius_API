@@ -136,6 +136,7 @@ router.get("/:cnt", (req, res) => {
   POST /images
 */
 router.post("/", (req, res) => {
+  console.log(req.body);
   let cnt = req.body.cnt;
   let ae = req.body.ae;
 

@@ -6,13 +6,11 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+/* POST users listing. */
 router.post('/', function(req, res, next) {
-  res.send(req.body);
-
-  if(!res.req.body)
-    return res.status(400).json({message: 'req body cannot be empty'})
+  console.log(req.body);
+  res.send('respond with a resource');
 });
 
+
 module.exports = router;
-
-
