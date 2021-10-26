@@ -3,14 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const methodOverride = require('method-override')
 
-
-const Grid = require('gridfs-stream');
-const crypto = require("crypto");
-const mongoose = require("mongoose");
 const multer = require("multer");
-const {GridFsStorage} = require("multer-gridfs-storage");
+const mongodb = require('mongodb');
+const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
+var fs = require("fs");
+var assert = require('assert');
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -18,6 +18,7 @@ var modelsRouter = require('./routes/models');
 
 
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,6 +30,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(multer().array())
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/models', modelsRouter);
@@ -36,40 +39,12 @@ app.use('/models', modelsRouter);
 
 
 const mongoURI = 'mongodb://localhost:27017/test'   // db
-const conn = mongoose.createConnection(mongoURI)    // db connection
-
-
-// Initialize gridfs storage engine 
-
-// init gfs
-
-let gfs    
-conn.once('open', () => {
-  // init stream
-  gfs = new mongoose.mongo.GridFSBucket(conn.db, {
-    bucketName: 'uploads'
-  })
-  //  gfs = Grid(conn.db, mongoose.mongo);  
-  // gfs.collection('uploads');
+let db;
+MongoClient.connect(mongoURI, (err, client) => {
+  assert.ifError(err)
+  db = client.db('test')
+  // var bucket = new mongodb.GridFSBucket(db)
 });
-
-
-// Create storage engine
-const storage = new GridFsStorage({
-  url: mongoURI,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-        const filename = file.originalname;
-        const fileInfo = {
-          filename: filename,
-          bucketName: 'uploads'
-        };
-        resolve(fileInfo);
-    });
-  }
-});
-const upload = multer({ storage });
-
 
 
 // catch 404 and forward to error handler

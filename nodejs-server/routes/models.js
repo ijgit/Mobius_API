@@ -1,7 +1,11 @@
 var express = require('express');
-
+const multer = require('multer');
+var gridfs = require('gridfs-stream');
+var fs = require("fs");
+var assert = require('assert');
 
 var router = express.Router();
+// const { Readable } = require('stream');
 
 /* GET  listing. */
 router.get('/', function(req, res, next) {
@@ -23,10 +27,13 @@ router.get('/download/:cnt', (req, res) => {
 
 
 router.post('/', function(req, res, next){
-    res.send('post request')
+  
+  console.log(req.body)
+  console.log(req.body.cnt)
+  console.log(req.body.ae)
+
+  res.send('post request')
 });
-
-
 
 router.delete('/', function(req, res, next){
     res.send('delete request')
