@@ -3,11 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
 const methodOverride = require('method-override')
-const multer = require('multer');
-const gridfsStorage = require('multer-gridfs-storage');
 
+
+const Grid = require('gridfs-stream');
+const crypto = require("crypto");
+const mongoose = require("mongoose");
+const multer = require("multer");
+const {GridFsStorage} = require("multer-gridfs-storage");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -32,29 +35,40 @@ app.use('/models', modelsRouter);
 
 
 
-const { defaultConfiguration, path } = require('../app');
+const mongoURI = 'mongodb://localhost:27017/test'   // db
+const conn = mongoose.createConnection(mongoURI)    // db connection
+
 
 // Initialize gridfs storage engine 
-const storage = new gridfsStorage({
-  url: defaultConfiguration.mongoURI,
+
+// init gfs
+
+let gfs    
+conn.once('open', () => {
+  // init stream
+  gfs = new mongoose.mongo.GridFSBucket(conn.db, {
+    bucketName: 'uploads'
+  })
+  //  gfs = Grid(conn.db, mongoose.mongo);  
+  // gfs.collection('uploads');
+});
+
+
+// Create storage engine
+const storage = new GridFsStorage({
+  url: mongoURI,
   file: (req, file) => {
-    return new Promise((resolve, reject)=>{
-      crypto.randomBytes(16, (err, buf)=>{
-        if(err){
-          return reject(err)
-        }
-        const filename = buf.toString('hex') + path.extname(file.originalname)
+    return new Promise((resolve, reject) => {
+        const filename = file.originalname;
         const fileInfo = {
           filename: filename,
           bucketName: 'uploads'
         };
-        resolve(fileInfo)
-      });
+        resolve(fileInfo);
     });
   }
 });
-
-const upload = multer({storage})
+const upload = multer({ storage });
 
 
 
