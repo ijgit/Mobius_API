@@ -143,7 +143,7 @@ router.post('/upload', function(req, res, next) {
 
     uploadStream.on('finish', () => {
 
-      const download_link = `${addr}/models/download?cnt=${cnt}&id=${uploadStream.id}&filename=${filename}`
+      const download_link = `http://${addr}/models/download?cnt=${cnt}&id=${uploadStream.id}&filename=${filename}`
       var up_data = {
         'id': uploadStream.id,
         'url': download_link,
